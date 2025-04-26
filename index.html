@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificador Didáctico Pro</title>
+    <!-- Librerías CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6a4c93;
+            --secondary: #8a5a44;
+            --accent: #f8bbd0;
+            --light: #f9f9f9;
+            --dark: #333;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Tema Claro (por defecto) */
+        .theme-light {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Tema Oscuro */
+        .theme-dark {
+            background-color: #23272f;
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .sidebar {
+            background: #181a20;
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .card,
+        .theme-dark .content-area {
+            background: #23272f;
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .form-control,
+        .theme-dark .form-select {
+            background: #181a20;
+            color: #f5f5f5;
+            border-color: #444;
+        }
+        
+        .theme-dark .table {
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .card-header {
+            background: #181a20;
+            color: #f5f5f5;
+            border-color: #444;
+        }
+        
+        .theme-dark .modal-content {
+            background: #23272f;
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .dropdown-menu {
+            background: #23272f;
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .dropdown-item {
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .dropdown-item:hover {
+            background: #181a20;
+        }
+        
+        .theme-dark .form-check-label {
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .ql-toolbar.ql-snow,
+        .theme-dark .ql-container.ql-snow {
+            background: #181a20;
+            color: #f5f5f5;
+            border-color: #444;
+        }
+        
+        .theme-dark .ql-editor {
+            background: #23272f;
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .nav-tabs .nav-link {
+            color: #f5f5f5;
+        }
+        
+        .theme-dark .nav-tabs .nav-link.active {
+            background-color: #181a20;
+            color: #f5f5f5;
+            border-color: #444;
+        }
+        
+        .theme-dark .auth-container {
+            background: #23272f;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+        
+        .theme-dark .text-muted {
+            color: #adb5bd !important;
+        }
+        
+        .auth-container {
+            max-width: 400px;
+            margin: 5rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .main-container {
+            display: none;
+        }
+        
+        .sidebar {
+            background: var(--primary);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 5px;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .content-area {
+            margin-left: 250px;
+            padding: 20px;
+            background: var(--light);
+            min-height: 100vh;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            border: none;
+        }
+        
+        .table th {
+            background: var(--light);
+            font-weight: 600;
+        }
+        
+        .planning-table td {
+            vertical-align: middle;
+        }
+        
+        .ql-editor {
+            min-height: 150px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .user-avatar-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .resource-card {
+            transition: transform 0.2s;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .resource-icon {
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+                position: fixed;
+                z-index: 1050;
+                width: 80vw;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                background: var(--primary);
+                overflow-y: auto;
+                transition: all 0.3s ease;
+            }
+            .sidebar.show-mobile {
+                display: block;
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            }
+            .content-area {
+                margin-left: 0 !important;
+            }
+        }
+        
+        /* === TEMA ROSA === */
+        .theme-pink {
+            background-color: #fff0f6;
+            color: #ad1457;
+        }
+        .theme-pink .sidebar {
+            background: #f06292;
+            color: #fff;
+        }
+        .theme-pink .card,
+        .theme-pink .content-area {
+            background: #fff0f6;
+            color: #ad1457;
+        }
+        .theme-pink .form-control,
+        .theme-pink .form-select {
+            background: #fce4ec;
+            color: #ad1457;
+            border-color: #f06292;
+        }
+        .theme-pink .table {
+            color: #ad1457;
+        }
+        .theme-pink .card-header {
+            background: #f8bbd0;
+            color: #ad1457;
+            border-color: #f06292;
+        }
+        .theme-pink .modal-content {
+            background: #fff0f6;
+            color: #ad1457;
+        }
+        .theme-pink .dropdown-menu {
+            background: #fff0f6;
+            color: #ad1457;
+        }
+        .theme-pink .dropdown-item {
+            color: #ad1457;
+        }
+        .theme-pink .dropdown-item:hover {
+            background: #f8bbd0;
+        }
+        .theme-pink .form-check-label {
+            color: #ad1457;
+        }
+        .theme-pink .ql-toolbar.ql-snow,
+        .theme-pink .ql-container.ql-snow {
+            background: #fce4ec;
+            color: #ad1457;
+            border-color: #f06292;
+        }
+        .theme-pink .ql-editor {
+            background: #fff0f6;
+            color: #ad1457;
+        }
+        .theme-pink .nav-tabs .nav-link {
+            color: #ad1457;
+        }
+        .theme-pink .nav-tabs .nav-link.active {
+            background-color: #f8bbd0;
+            color: #ad1457;
+            border-color: #f06292;
+        }
+        .theme-pink .auth-container {
+            background: #fff0f6;
+            box-shadow: 0 0 20px rgba(240,98,146,0.1);
+        }
+        .theme-pink .text-muted {
+            color: #ad1457 !important;
+        }
+        .theme-pink .btn-primary {
+            background: #f06292;
+            border: none;
+        }
+        .theme-pink .btn-secondary {
+            background: #ad1457;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón hamburguesa para móvil -->
+    <button class="btn btn-primary d-md-none" id="sidebarToggle" style="position:fixed;top:10px;left:10px;z-index:1051;">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sistema de Autenticación -->
+    <div id="authSection" class="auth-container">
+        <div class="text-center mb-4">
+            <h3><i class="fas fa-book-open me-2"></i> Planificador Didáctico Pro</h3>
+            <p class="text-muted">Sistema profesional para docentes</p>
+        </div>
+        
+        <ul class="nav nav-tabs mb-4" id="authTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button">Iniciar Sesión</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button">Registrarse</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="authTabsContent">
+            <div class="tab-pane fade show active" id="login" role="tabpanel">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="loginEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="loginEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+                </form>
+            </div>
+            
+            <div class="tab-pane fade" id="register" role="tabpanel">
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="registerName" class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" id="registerName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="registerEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="registerPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerInstitution" class="form-label">Institución Educativa</label>
+                        <input type="text" class="form-control" id="registerInstitution">
+                    </div>
+                    <button type="submit" class="btn btn-secondary w-100">Registrarse</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sistema Principal -->
+    <div id="mainSection" class="main-container">
+        <!-- Barra Lateral -->
+        <div class="sidebar col-md-3 col-lg-2 d-md-block">
+            <div class="text-center mb-4">
+                <img src="https://ui-avatars.com/api/?name=D+B&background=random" alt="Usuario" class="user-avatar mb-2">
+                <h6 id="userName">Daniela Betancourt</h6>
+                <small id="userInstitution">Los Delfines</small>
+            </div>
+            
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#dashboard" data-section="dashboard">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#new-plan" data-section="newPlan">
+                        <i class="fas fa-plus-circle"></i> Nueva Planificación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#my-plans" data-section="myPlans">
+                        <i class="fas fa-list-ul"></i> Mis Planificaciones
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#templates" data-section="templates">
+                        <i class="fas fa-clone"></i> Plantillas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#resources" data-section="resources">
+                        <i class="fas fa-book"></i> Recursos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#calendar" data-section="calendar">
+                        <i class="fas fa-calendar-alt"></i> Calendario
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#settings" data-section="settings">
+                        <i class="fas fa-cog"></i> Configuración
+                    </a>
+                </li>
+                <li class="nav-item mt-3">
+                    <a class="nav-link text-warning" href="#" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Área de Contenido -->
+        <div class="content-area">
+            <!-- Dashboard -->
+            <div id="dashboardSection" class="content-section">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Compartir</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Exportar</button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                            <span data-feather="calendar"></span> Esta semana
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Planificaciones</h5>
+                                <h2 id="totalPlans" class="text-primary">0</h2>
+                                <p class="card-text">Total creadas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Actividades</h5>
+                                <h2 id="totalActivities" class="text-success">0</h2>
+                                <p class="card-text">Este mes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Próximas</h5>
+                                <h2 id="upcomingPlans" class="text-warning">0</h2>
+                                <p class="card-text">Esta semana</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Recientes</div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Fecha</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentPlansTable">
+                                            <!-- Se llena con JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Calendario</div>
+                            <div class="card-body">
+                                <div id="miniCalendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nueva Planificación -->
+            <div id="newPlanSection" class="content-section" style="display: none;">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Nueva Planificación</h1>
+                </div>
+                
+                <form id="planForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">Información Básica</div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="planTitle" class="form-label">Título</label>
+                                        <input type="text" class="form-control" id="planTitle" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="planCourse" class="form-label">Curso/Nivel</label>
+                                        <input type="text" class="form-control" id="planCourse" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="planDates" class="form-label">Rango de Fechas</label>
+                                        <input type="text" class="form-control" id="planDates">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="planArea" class="form-label">Área</label>
+                                        <select class="form-select" id="planArea">
+                                            <option value="Preescolar">Preescolar</option>
+                                            <option value="Cultural y Artística">Cultural y Artística</option>
+                                            <option value="Lenguaje">Lenguaje</option>
+                                            <option value="Matemáticas">Matemáticas</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-4">
+                                <div class="card-header">Competencias</div>
+                                <div class="card-body">
+                                    <div id="competenciesContainer">
+                                        <div class="competency-item mb-2">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control competency-input" placeholder="Competencia">
+                                                <button class="btn btn-outline-danger remove-competency" type="button">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-primary mt-2" id="addCompetencyBtn">
+                                        <i class="fas fa-plus"></i> Añadir Competencia
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">Objetivos</div>
+                                <div class="card-body">
+                                    <div id="objectivesContainer">
+                                        <div class="mb-3 objective-item">
+                                            <textarea class="form-control objective-input" rows="2" placeholder="Objetivo"></textarea>
+                                            <button class="btn btn-sm btn-outline-danger mt-1 remove-objective" type="button">
+                                                <i class="fas fa-times"></i> Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-primary" id="addObjectiveBtn">
+                                        <i class="fas fa-plus"></i> Añadir Objetivo
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-4">
+                                <div class="card-header">Recursos</div>
+                                <div class="card-body">
+                                    <div id="resourcesEditor"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">Planificación Semanal</div>
+                        <div class="card-body">
+                            <div id="weeksContainer">
+                                <div class="week-plan mb-4">
+                                    <h5>Semana 1</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered planning-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Día</th>
+                                                    <th>Actividades</th>
+                                                    <th>Recursos</th>
+                                                    <th>Indicadores</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><input type="text" class="form-control" placeholder="Lunes"></td>
+                                                    <td><textarea class="form-control" rows="2"></textarea></td>
+                                                    <td><input type="text" class="form-control"></td>
+                                                    <td><textarea class="form-control" rows="2"></textarea></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-danger remove-activity" type="button">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-secondary add-activity-btn">
+                                        <i class="fas fa-plus"></i> Añadir Actividad
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="addWeekBtn">
+                                <i class="fas fa-plus"></i> Añadir Semana
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary me-md-2" id="saveDraftBtn">
+                            <i class="fas fa-save"></i> Guardar Borrador
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Finalizar Planificación
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Mis Planificaciones -->
+            <div id="myPlansSection" class="content-section" style="display: none;">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Mis Planificaciones</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-filter="all">Todas</a></li>
+                                <li><a class="dropdown-item" href="#" data-filter="draft">Borradores</a></li>
+                                <li><a class="dropdown-item" href="#" data-filter="completed">Completadas</a></li>
+                            </ul>
+                        </div>
+                        <div class="input-group me-2" style="width: 200px;">
+                            <input type="text" class="form-control form-control-sm" placeholder="Buscar..." id="planSearch">
+                            <button class="btn btn-sm btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Curso</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plansTable">
+                            <!-- Se llena con JS -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination">
+                        <!-- Se llena con JS -->
+                    </ul>
+                </nav>
+            </div>
+            
+            <!-- Sección de Plantillas -->
+            <div id="templatesSection" class="content-section" style="display: none;">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Mis Plantillas</h1>
+                    <button class="btn btn-primary" id="newTemplateBtn">
+                        <i class="fas fa-plus"></i> Nueva Plantilla
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Área</th>
+                                <th>Última modificación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="templatesTable">
+                            <!-- Ejemplo de plantilla -->
+                            <tr>
+                                <td>Preescolar Artístico</td>
+                                <td>Preescolar</td>
+                                <td>15/05/2023</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary use-template">
+                                        <i class="fas fa-play-circle"></i> Usar
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary edit-template">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-template">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Más filas se generarán con JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Sección de Recursos -->
+            <div id="resourcesSection" class="content-section" style="display: none;">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Recursos Educativos</h1>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Videos</a></li>
+                            <li><a class="dropdown-item" href="#">Canciones</a></li>
+                            <li><a class="dropdown-item" href="#">Juegos</a></li>
+                        </ul>
+                        <button class="btn btn-primary" id="addResourceBtn">
+                            <i class="fas fa-plus"></i> Añadir
+                        </button>
+                        <button class="btn btn-outline-success" id="importResourceBtn">
+                            <i class="fas fa-cloud-download-alt"></i> Importar recurso
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row" id="resourcesGrid">
+                    <!-- Tarjeta de recurso de ejemplo -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card resource-card h-100">
+                            <img src="https://i.ytimg.com/vi/ejemplo/hqdefault.jpg" class="card-img-top" alt="Video educativo">
+                            <div class="card-body">
+                                <h5 class="card-title">Los Colores</h5>
+                                <p class="card-text">Video interactivo para enseñar colores primarios</p>
+                                <div class="resource-actions">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-play"></i> Ver
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-link"></i> Copiar URL
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-footer text-muted">
+                                <small>Añadido el 10/05/2023</small>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Más tarjetas se generarán con JS -->
+                </div>
+            </div>
+            
+            <!-- Sección de Calendario -->
+            <div id="calendarSection" class="content-section" style="display: none;">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Calendario</h1>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="btn btn-sm btn-primary" id="todayBtn">
+                            Hoy
+                        </button>
+                    </div>
+                </div>
+
+                <div id="fullCalendar"></div>
+
+                <!-- Modal para eventos -->
+                <div class="modal fade" id="eventModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Nuevo Evento</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="eventForm">
+                                    <div class="mb-3">
+                                        <label for="eventTitle" class="form-label">Título</label>
+                                        <input type="text" class="form-control" id="eventTitle" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="eventDate" class="form-label">Fecha</label>
+                                        <input type="text" class="form-control" id="eventDate">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="eventDescription" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="eventDescription" rows="3"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" id="deleteEventBtn" style="display: none;">
+                                    Eliminar
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="saveEventBtn">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de Configuración -->
+            <div id="settingsSection" class="content-section" style="display: none;">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Configuración</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Perfil</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="profileForm">
+                                    <div class="mb-3 text-center">
+                                        <img src="https://ui-avatars.com/api/?name=D+B&background=random" alt="Avatar" class="user-avatar-lg mb-3" id="profileAvatar">
+                                        <button type="button" class="btn btn-sm btn-outline-primary d-block mx-auto" id="changeAvatarBtn">
+                                            Cambiar foto
+                                        </button>
+                                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="profileName" class="form-label">Nombre completo</label>
+                                        <input type="text" class="form-control" id="profileName" value="Daniela Betancourt">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="profileEmail" class="form-label">Correo electrónico</label>
+                                        <input type="email" class="form-control" id="profileEmail" value="daniela@ejemplo.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="profileInstitution" class="form-label">Institución</label>
+                                        <input type="text" class="form-control" id="profileInstitution" value="Unidad Educativa Particular Los Delfines">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Preferencias</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="preferencesForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Tema de la aplicación</label>
+                                        <select class="form-select" id="themeSelect">
+                                            <option value="light">Claro</option>
+                                            <option value="dark">Oscuro</option>
+                                            <option value="pink">Rosa</option>
+                                            <option value="auto">Automático (según sistema)</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="notificationsCheck" checked>
+                                        <label class="form-check-label" for="notificationsCheck">Recibir notificaciones</label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Idioma</label>
+                                        <select class="form-select" id="languageSelect">
+                                            <option value="es" selected>Español</option>
+                                            <option value="en">Inglés</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar preferencias</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header text-danger">
+                                <h5>Zona peligrosa</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-outline-danger" id="exportDataBtn">
+                                    <i class="fas fa-file-export"></i> Exportar todos mis datos
+                                </button>
+                                <button class="btn btn-outline-danger mt-2" id="deleteAccountBtn">
+                                    <i class="fas fa-user-slash"></i> Eliminar cuenta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para añadir recursos -->
+    <div class="modal fade" id="addResourceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="addResourceForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Añadir Recurso Educativo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="resourceTitle" class="form-label">Título</label>
+                            <input type="text" class="form-control" id="resourceTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resourceDescription" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="resourceDescription" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resourceType" class="form-label">Tipo</label>
+                            <select class="form-select" id="resourceType" required>
+                                <option value="video">Video</option>
+                                <option value="song">Canción</option>
+                                <option value="game">Juego</option>
+                                <option value="document">Documento</option>
+                                <option value="link">Enlace</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resourceUrl" class="form-label">URL</label>
+                            <input type="url" class="form-control" id="resourceUrl" required>
+                        </div>
+                        <div class="mb-3" id="thumbnailGroup" style="display:none;">
+                            <label for="resourceThumbnail" class="form-label">Miniatura (opcional, solo videos)</label>
+                            <input type="url" class="form-control" id="resourceThumbnail" placeholder="URL de la miniatura">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para importar recursos -->
+    <div class="modal fade" id="importResourceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Importar recurso externo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="importResourceForm">
+                        <div class="mb-3">
+                            <label for="importResourceUrl" class="form-label">Pega el enlace de YouTube o Google Drive</label>
+                            <input type="url" class="form-control" id="importResourceUrl" required placeholder="https://...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="importResourceTitle" class="form-label">Título (opcional)</label>
+                            <input type="text" class="form-control" id="importResourceTitle">
+                        </div>
+                        <div class="mb-3">
+                            <label for="importResourceDesc" class="form-label">Descripción (opcional)</label>
+                            <textarea class="form-control" id="importResourceDesc"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="importResourceSaveBtn">Importar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Librerías JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script>
+    
+    <script>
+        // Base de datos local (simulada)
+        const db = {
+            users: [],
+            plans: [],
+            templates: [],
+            resources: [],
+            events: []
+        };
+        
+        // Estado de la aplicación
+        const appState = {
+            currentUser: null,
+            currentSection: 'dashboard',
+            currentPlan: null,
+            plansPerPage: 5
+        };
+        
+        // Variables globales para calendarios
+        let calendar;
+        let miniCalendar;
+        
+        // Funciones de persistencia
+        function saveToStorage() {
+            localStorage.setItem('planificador_db', JSON.stringify(db));
+            localStorage.setItem('planificador_user', JSON.stringify(appState.currentUser));
+        }
+        
+        function loadFromStorage() {
+            const dbStr = localStorage.getItem('planificador_db');
+            const userStr = localStorage.getItem('planificador_user');
+            
+            if (dbStr) {
+                const loaded = JSON.parse(dbStr);
+                // Copiar propiedades para mantener referencias
+                Object.keys(db).forEach(k => db[k] = loaded[k] || []);
+            }
+            
+            if (userStr) {
+                appState.currentUser = JSON.parse(userStr);
+            }
+        }
+        
+        // Inicialización de editores
+        let resourcesEditor;
+        
+        // DOM Ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar sidebar para móvil
+            setupMobileSidebar();
+            
+            // Cargar datos desde localStorage
+            loadFromStorage();
+            
+            // Inicializar editores
+            resourcesEditor = new Quill('#resourcesEditor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Describe los recursos necesarios...'
+            });
+            
+            // Aplicar tema si hay un usuario con sesión iniciada
+            if (appState.currentUser && appState.currentUser.settings) {
+                applyTheme(appState.currentUser.settings.theme || 'light');
+            }
+            
+            // Inicializar datepickers
+            flatpickr("#planDates", {
+                mode: "range",
+                locale: "es",
+                dateFormat: "d/m/Y"
+            });
+            
+            // Cargar datos de prueba solo si no hay usuarios en la base de datos
+            if (!db.users.length) {
+                loadSampleData();
+                saveToStorage();
+            }
+            
+            // Si hay un usuario con sesión iniciada, mostrar la aplicación principal
+            if (appState.currentUser) {
+                loginUser(appState.currentUser, false);
+            }
+            
+            // Manejadores de eventos
+            setupEventHandlers();
+        });
+        
+        function loadSampleData() {
+            // Usuario de prueba
+            db.users.push({
+                id: 1,
+                name: "Daniela Betancourt",
+                email: "daniela@ejemplo.com",
+                password: "123456",
+                institution: "Unidad Educativa Particular Los Delfines",
+                avatar: "https://ui-avatars.com/api/?name=D+B&background=random",
+                settings: {
+                    theme: "light",
+                    notifications: true,
+                    language: "es"
+                }
+            });
+            
+            // Planificaciones de prueba
+            db.plans.push({
+                id: 1,
+                userId: 1,
+                title: "Planificación Mayo 2023 - Preescolar",
+                course: "Primero de Básica A-B",
+                area: "Preescolar",
+                dates: "01/05/2023 al 31/05/2023",
+                competencies: [
+                    "Competencia creativa y expresiva",
+                    "Competencia estética y sensorial"
+                ],
+                objectives: [
+                    "O.ECA.1.1. Explorar las posibilidades de los sonidos, el movimiento y/o las imágenes",
+                    "O.ECA.1.4. Aportar ideas y llegar a acuerdos con los otros miembros del grupo"
+                ],
+                resources: "<p>Videos, canciones, juegos interactivos</p>",
+                weeks: [
+                    {
+                        title: "Semana 1",
+                        activities: [
+                            {
+                                day: "Lunes",
+                                activity: "Decoración de etiquetas personales",
+                                resources: "Cartulinas, crayones",
+                                indicators: "Reconoce su nombre de manera global"
+                            }
+                        ]
+                    }
+                ],
+                status: "completed",
+                createdAt: new Date()
+            });
+            
+            // Plantillas de prueba
+            db.templates.push({
+                id: 1,
+                userId: 1,
+                name: "Preescolar Artístico",
+                content: {
+                    area: "Preescolar",
+                    competencies: [
+                        "Competencia creativa y expresiva",
+                        "Competencia estética y sensorial"
+                    ],
+                    objectives: [
+                        "O.ECA.1.1. Explorar las posibilidades de los sonidos, el movimiento y/o las imágenes"
+                    ]
+                },
+                updatedAt: new Date()
+            });
+            
+            // Recursos de prueba
+            db.resources.push({
+                id: 1,
+                userId: 1,
+                title: "Los Colores",
+                description: "Video interactivo para enseñar colores primarios",
+                type: "video",
+                url: "https://youtube.com/watch?v=ejemplo",
+                thumbnail: "https://i.ytimg.com/vi/ejemplo/hqdefault.jpg",
+                createdAt: new Date('2023-05-10')
+            });
+            
+            // Eventos de prueba
+            db.events.push({
+                id: 1,
+                userId: 1,
+                title: "Reunión de padres",
+                date: "2023-05-15",
+                description: "Reunión con padres de familia para presentar planificación",
+                color: "#6a4c93",
+                createdAt: new Date()
+            });
+        }
+        
+        function setupEventHandlers() {
+            // Autenticación
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                const user = db.users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    loginUser(user);
+                } else {
+                    Swal.fire('Error', 'Credenciales incorrectas', 'error');
+                }
+            });
+            
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const institution = document.getElementById('registerInstitution').value;
+            
+                // Validación de email único
+                const emailExists = db.users.some(u => u.email.toLowerCase() === email.toLowerCase());
+                if (emailExists) {
+                    Swal.fire('Error', 'El email ya está registrado. Por favor, usa otro.', 'error');
+                    return;
+                }
+            
+                const newUser = {
+                    id: db.users.length + 1,
+                    name,
+                    email,
+                    password,
+                    institution,
+                    avatar: `https://ui-avatars.com/api/?name=${name.split(' ').join('+')}&background=random`,
+                    settings: {
+                        theme: "light",
+                        notifications: true,
+                        language: "es"
+                    }
+                };
+            
+                db.users.push(newUser);
+                saveToStorage();
+                loginUser(newUser);
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                logoutUser();
+            });
+            
+            // Navegación
+            document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showSection(this.getAttribute('data-section'));
+                });
+            });
+            
+            // Planificación
+            document.getElementById('addCompetencyBtn').addEventListener('click', addCompetencyField);
+            document.getElementById('addObjectiveBtn').addEventListener('click', addObjectiveField);
+            document.getElementById('addWeekBtn').addEventListener('click', addWeek);
+            
+            document.getElementById('planForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                savePlan();
+            });
+            
+            // Plantillas
+            document.getElementById('newTemplateBtn').addEventListener('click', function() {
+                createNewTemplate();
+            });
+            
+            // Delegación de eventos para elementos dinámicos
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-competency')) {
+                    removeCompetencyField(e.target.closest('.competency-item'));
+                }
+                
+                if (e.target.classList.contains('remove-objective')) {
+                    removeObjectiveField(e.target.closest('.objective-item'));
+                }
+                
+                if (e.target.classList.contains('add-activity-btn')) {
+                    addActivityToWeek(e.target.closest('.week-plan'));
+                }
+                
+                if (e.target.classList.contains('remove-activity')) {
+                    removeActivityFromWeek(e.target.closest('tr'));
+                }
+                
+                if (e.target.classList.contains('use-template')) {
+                    useTemplate(e.target.dataset.id);
+                }
+                
+                if (e.target.classList.contains('edit-template')) {
+                    editTemplate(e.target.dataset.id);
+                }
+                
+                if (e.target.classList.contains('delete-template')) {
+                    deleteTemplate(e.target.dataset.id);
+                }
+            });
+        }
+        
+        function loginUser(user, showWelcome = true) {
+            appState.currentUser = user;
+            
+            // Actualizar UI
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userInstitution').textContent = user.institution;
+            document.querySelector('.user-avatar').src = user.avatar;
+            
+            // Mostrar sistema principal
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('mainSection').style.display = 'block';
+            
+            // Cargar datos del usuario
+            loadUserData();
+            showSection('dashboard');
+            
+            // Aplicar el tema del usuario
+            if (user.settings && user.settings.theme) {
+                applyTheme(user.settings.theme);
+            } else {
+                applyTheme('light');
+            }
+            
+            // Guardar en localStorage
+            saveToStorage();
+            
+            if (showWelcome) {
+                Swal.fire(`¡Bienvenida ${user.name}!`, 'Has iniciado sesión correctamente', 'success');
+            }
+        }
+        
+        function logoutUser() {
+            appState.currentUser = null;
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('mainSection').style.display = 'none';
+            
+            // Limpiar formularios
+            document.getElementById('loginForm').reset();
+            
+            // Actualizar localStorage
+            saveToStorage();
+        }
+        
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Mostrar la sección solicitada
+            document.getElementById(`${sectionId}Section`).style.display = 'block';
+            appState.currentSection = sectionId;
+            
+            // Actualizar navegación
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            document.querySelector(`.nav-link[data-section="${sectionId}"]`).classList.add('active');
+            
+            // Cargar datos específicos de la sección
+            switch(sectionId) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'myPlans':
+                    loadMyPlans();
+                    break;
+                case 'newPlan':
+                    resetPlanForm();
+                    break;
+                case 'templates':
+                    loadTemplates();
+                    break;
+                case 'resources':
+                    loadResources();
+                    break;
+                case 'calendar':
+                    initCalendar();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+            }
+        }
+        
+        function loadUserData() {
+            if (!appState.currentUser) return;
+            
+            // Cargar datos del usuario (simulado)
+            const userPlans = db.plans.filter(plan => plan.userId === appState.currentUser.id);
+            const userTemplates = db.templates.filter(template => template.userId === appState.currentUser.id);
+            
+            // Actualizar UI
+            document.getElementById('totalPlans').textContent = userPlans.length;
+            
+            // Calcular actividades totales
+            let totalActivities = 0;
+            userPlans.forEach(plan => {
+                plan.weeks.forEach(week => {
+                    totalActivities += week.activities.length;
+                });
+            });
+            document.getElementById('totalActivities').textContent = totalActivities;
+        }
+        
+        function loadDashboard() {
+            if (!appState.currentUser) return;
+            
+            const recentPlans = db.plans
+                .filter(plan => plan.userId === appState.currentUser.id)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 5);
+            
+            const tableBody = document.getElementById('recentPlansTable');
+            tableBody.innerHTML = '';
+            
+            recentPlans.forEach(plan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${plan.title}</td>
+                    <td>${plan.dates}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary view-plan" data-id="${plan.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Agregar eventos a los botones
+            document.querySelectorAll('.view-plan').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewPlan(this.getAttribute('data-id'));
+                });
+            });
+            
+            // Configurar botones de Compartir y Exportar
+            setupDashboardButtons();
+            
+            // Inicializar mini-calendario
+            initMiniCalendar();
+        }
+        
+        function initMiniCalendar() {
+            // Destruir el miniCalendar anterior si existe
+            if (miniCalendar) {
+                miniCalendar.destroy();
+            }
+            
+            const miniCalendarEl = document.getElementById('miniCalendar');
+            miniCalendarEl.innerHTML = ""; // Limpiar el contenedor
+            
+            miniCalendar = new FullCalendar.Calendar(miniCalendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                height: 300,
+                headerToolbar: {
+                    left: '',
+                    center: 'title',
+                    right: ''
+                },
+                events: getCalendarEvents(),
+                eventClick: function(info) {
+                    // Mostrar detalles del evento en un modal
+                    Swal.fire({
+                        title: info.event.title,
+                        text: info.event.extendedProps.description || '',
+                        icon: 'info'
+                    });
+                }
+            });
+            
+            miniCalendar.render();
+        }
+        
+        function loadMyPlans(page = 1) {
+            if (!appState.currentUser) return;
+            
+            const userPlans = db.plans
+                .filter(plan => plan.userId === appState.currentUser.id)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            const startIdx = (page - 1) * appState.plansPerPage;
+            const paginatedPlans = userPlans.slice(startIdx, startIdx + appState.plansPerPage);
+            
+            const tableBody = document.getElementById('plansTable');
+            tableBody.innerHTML = '';
+            
+            paginatedPlans.forEach(plan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${plan.title}</td>
+                    <td>${plan.course}</td>
+                    <td>${plan.dates}</td>
+                    <td>
+                        <span class="badge ${plan.status === 'completed' ? 'bg-success' : 'bg-warning'}">
+                            ${plan.status === 'completed' ? 'Completada' : 'Borrador'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary view-plan" data-id="${plan.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary edit-plan" data-id="${plan.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-plan" data-id="${plan.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Configurar paginación
+            const totalPages = Math.ceil(userPlans.length / appState.plansPerPage);
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const pageItem = document.createElement('li');
+                pageItem.className = `page-item ${i === page ? 'active' : ''}`;
+                pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                
+                pageItem.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    loadMyPlans(i);
+                });
+                
+                pagination.appendChild(pageItem);
+            }
+            
+            // Agregar eventos a los botones
+            document.querySelectorAll('.view-plan').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewPlan(this.getAttribute('data-id'));
+                });
+            });
+            
+            document.querySelectorAll('.edit-plan').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    editPlan(this.getAttribute('data-id'));
+                });
+            });
+            
+            document.querySelectorAll('.delete-plan').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    deletePlan(this.getAttribute('data-id'));
+                });
+            });
+        }
+        
+        function addCompetencyField(value = '') {
+            const container = document.getElementById('competenciesContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'competency-item mb-2';
+            newItem.innerHTML = `
+                <div class="input-group">
+                    <input type="text" class="form-control competency-input" placeholder="Competencia" value="${value}">
+                    <button class="btn btn-outline-danger remove-competency" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(newItem);
+        }
+        
+        function removeCompetencyField(item) {
+            if (document.querySelectorAll('.competency-item').length > 1) {
+                item.remove();
+            } else {
+                Swal.fire('Atención', 'Debe haber al menos una competencia', 'warning');
+            }
+        }
+        
+        function addObjectiveField(value = '') {
+            const container = document.getElementById('objectivesContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'mb-3 objective-item';
+            newItem.innerHTML = `
+                <textarea class="form-control objective-input" rows="2" placeholder="Objetivo">${value}</textarea>
+                <button class="btn btn-sm btn-outline-danger mt-1 remove-objective" type="button">
+                    <i class="fas fa-times"></i> Eliminar
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+        
+        function removeObjectiveField(item) {
+            if (document.querySelectorAll('.objective-item').length > 1) {
+                item.remove();
+            } else {
+                Swal.fire('Atención', 'Debe haber al menos un objetivo', 'warning');
+            }
+        }
+        
+        function addWeek() {
+            const container = document.getElementById('weeksContainer');
+            const weekNumber = container.children.length + 1;
+            
+            const weekDiv = document.createElement('div');
+            weekDiv.className = 'week-plan mb-4';
+            weekDiv.innerHTML = `
+                <h5>Semana ${weekNumber}</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered planning-table">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Actividades</th>
+                                <th>Recursos</th>
+                                <th>Indicadores</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" class="form-control" placeholder="Lunes"></td>
+                                <td><textarea class="form-control" rows="2"></textarea></td>
+                                <td><input type="text" class="form-control"></td>
+                                <td><textarea class="form-control" rows="2"></textarea></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger remove-activity" type="button">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" class="btn btn-sm btn-secondary add-activity-btn">
+                    <i class="fas fa-plus"></i> Añadir Actividad
+                </button>
+            `;
+            container.appendChild(weekDiv);
+        }
+        
+        function addActivityToWeek(weekElement) {
+            const tableBody = weekElement.querySelector('tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" class="form-control" placeholder="Día"></td>
+                <td><textarea class="form-control" rows="2"></textarea></td>
+                <td><input type="text" class="form-control"></td>
+                <td><textarea class="form-control" rows="2"></textarea></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger remove-activity" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+        }
+        
+        function removeActivityFromWeek(row) {
+            if (row.closest('tbody').querySelectorAll('tr').length > 1) {
+                row.remove();
+            } else {
+                Swal.fire('Atención', 'Debe haber al menos una actividad por semana', 'warning');
+            }
+        }
+        
+        function resetPlanForm() {
+            document.getElementById('planForm').reset();
+            resourcesEditor.root.innerHTML = '';
+            
+            // Limpiar competencias (dejar solo una)
+            const competenciesContainer = document.getElementById('competenciesContainer');
+            competenciesContainer.innerHTML = `
+                <div class="competency-item mb-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control competency-input" placeholder="Competencia">
+                        <button class="btn btn-outline-danger remove-competency" type="button">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Limpiar objetivos (dejar solo uno)
+            const objectivesContainer = document.getElementById('objectivesContainer');
+            objectivesContainer.innerHTML = `
+                <div class="mb-3 objective-item">
+                    <textarea class="form-control objective-input" rows="2" placeholder="Objetivo"></textarea>
+                    <button class="btn btn-sm btn-outline-danger mt-1 remove-objective" type="button">
+                        <i class="fas fa-times"></i> Eliminar
+                    </button>
+                </div>
+            `;
+            
+            // Limpiar semanas (dejar solo una)
+            const weeksContainer = document.getElementById('weeksContainer');
+            weeksContainer.innerHTML = '';
+            addWeek();
+            
+            appState.currentPlan = null;
+        }
+        
+        function savePlan() {
+            if (!appState.currentUser) return;
+            
+            // Recoger datos del formulario
+            const planData = {
+                title: document.getElementById('planTitle').value,
+                course: document.getElementById('planCourse').value,
+                dates: document.getElementById('planDates').value,
+                area: document.getElementById('planArea').value,
+                competencies: Array.from(document.querySelectorAll('.competency-input')).map(input => input.value),
+                objectives: Array.from(document.querySelectorAll('.objective-input')).map(textarea => textarea.value),
+                resources: resourcesEditor.root.innerHTML,
+                weeks: [],
+                status: 'completed',
+                userId: appState.currentUser.id,
+                createdAt: new Date()
+            };
+            
+            // Recoger semanas y actividades
+            document.querySelectorAll('.week-plan').forEach((weekEl, weekIdx) => {
+                const week = {
+                    title: `Semana ${weekIdx + 1}`,
+                    activities: []
+                };
+                
+                weekEl.querySelectorAll('tbody tr').forEach(row => {
+                    const inputs = row.querySelectorAll('input, textarea');
+                    week.activities.push({
+                        day: inputs[0].value,
+                        activity: inputs[1].value,
+                        resources: inputs[2].value,
+                        indicators: inputs[3].value
+                    });
+                });
+                
+                planData.weeks.push(week);
+            });
+            
+            // Guardar en la "base de datos"
+            if (appState.currentPlan) {
+                // Editar plan existente
+                const index = db.plans.findIndex(p => p.id === appState.currentPlan);
+                db.plans[index] = { ...db.plans[index], ...planData };
+                saveToStorage();
+                Swal.fire('¡Actualizado!', 'La planificación se ha actualizado correctamente', 'success');
+            } else {
+                // Nuevo plan
+                planData.id = db.plans.length + 1;
+                db.plans.push(planData);
+                saveToStorage();
+                Swal.fire('¡Guardado!', 'La planificación se ha creado correctamente', 'success');
+            }
+            
+            // Actualizar UI
+            loadUserData();
+            showSection('myPlans');
+        }
+        
+        function viewPlan(planId) {
+            const plan = db.plans.find(p => p.id === parseInt(planId));
+            if (!plan) return;
+            
+            Swal.fire({
+                title: plan.title,
+                html: `
+                    <div id="plan-pdf-content">
+                        ${generatePlanHTML(plan)}
+                    </div>
+                    <div class="mt-3 text-end">
+                        <button id="downloadPlanPdfBtn" class="btn btn-outline-primary">
+                            <i class="fas fa-file-pdf"></i> Descargar PDF
+                        </button>
+                    </div>
+                `,
+                showConfirmButton: false,
+                width: '800px',
+                customClass: {
+                    popup: 'plan-popup'
+                },
+                didOpen: () => {
+                    document.getElementById('downloadPlanPdfBtn').addEventListener('click', () => {
+                        const element = document.getElementById('plan-pdf-content');
+                        html2pdf()
+                            .set({
+                                margin: 10,
+                                filename: `${plan.title.replace(/\s+/g, '_')}.pdf`,
+                                image: { type: 'jpeg', quality: 0.98 },
+                                html2canvas: { scale: 2 },
+                                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                            })
+                            .from(element)
+                            .save();
+                    });
+                }
+            });
+        }
+        
+        function editPlan(planId) {
+            const plan = db.plans.find(p => p.id === parseInt(planId));
+            if (!plan) return;
+            
+            appState.currentPlan = plan.id;
+            showSection('newPlan');
+            
+            // Llenar formulario
+            document.getElementById('planTitle').value = plan.title;
+            document.getElementById('planCourse').value = plan.course;
+            document.getElementById('planDates').value = plan.dates;
+            document.getElementById('planArea').value = plan.area;
+            
+            // Competencias
+            const competenciesContainer = document.getElementById('competenciesContainer');
+            competenciesContainer.innerHTML = '';
+            plan.competencies.forEach((comp, idx) => {
+                addCompetencyField(comp);
+            });
+            
+            // Objetivos
+            const objectivesContainer = document.getElementById('objectivesContainer');
+            objectivesContainer.innerHTML = '';
+            plan.objectives.forEach((obj, idx) => {
+                addObjectiveField(obj);
+            });
+            
+            // Recursos
+            resourcesEditor.root.innerHTML = plan.resources;
+            
+            // Semanas
+            const weeksContainer = document.getElementById('weeksContainer');
+            weeksContainer.innerHTML = '';
+            plan.weeks.forEach(week => {
+                const weekDiv = document.createElement('div');
+                weekDiv.className = 'week-plan mb-4';
+                weekDiv.innerHTML = `
+                    <h5>${week.title}</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered planning-table">
+                            <thead>
+                                <tr>
+                                    <th>Día</th>
+                                    <th>Actividades</th>
+                                    <th>Recursos</th>
+                                    <th>Indicadores</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Se llena con JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-secondary add-activity-btn">
+                        <i class="fas fa-plus"></i> Añadir Actividad
+                    </button>
+                `;
+                
+                const tbody = weekDiv.querySelector('tbody');
+                week.activities.forEach(activity => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><input type="text" class="form-control" value="${activity.day}"></td>
+                        <td><textarea class="form-control" rows="2">${activity.activity}</textarea></td>
+                        <td><input type="text" class="form-control" value="${activity.resources}"></td>
+                        <td><textarea class="form-control" rows="2">${activity.indicators}</textarea></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger remove-activity" type="button">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                weeksContainer.appendChild(weekDiv);
+            });
+        }
+        
+        function deletePlan(planId) {
+            Swal.fire({
+                title: '¿Estás segura?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, borrarlo'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const index = db.plans.findIndex(p => p.id === parseInt(planId));
+                    if (index !== -1) {
+                        db.plans.splice(index, 1);
+                        saveToStorage();
+                        loadMyPlans();
+                        Swal.fire('¡Borrado!', 'La planificación ha sido eliminada.', 'success');
+                    }
+                }
+            });
+        }
+        
+        function generatePlanHTML(plan) {
+            let html = `
+                <div class="plan-details">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p><strong>Curso:</strong> ${plan.course}</p>
+                            <p><strong>Área:</strong> ${plan.area}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Fecha:</strong> ${plan.dates}</p>
+                            <p><strong>Estado:</strong> <span class="badge ${plan.status === 'completed' ? 'bg-success' : 'bg-warning'}">${plan.status === 'completed' ? 'Completada' : 'Borrador'}</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Competencias</h5>
+                        <ul>
+                            ${plan.competencies.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Objetivos</h5>
+                        <ul>
+                            ${plan.objectives.map(o => `<li>${o}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Recursos</h5>
+                        <div class="resources-content">${plan.resources}</div>
+                    </div>
+                    
+                    <div class="plan-weeks">
+                        <h5 class="mb-3">Planificación Semanal</h5>
+            `;
+            
+            plan.weeks.forEach(week => {
+                html += `
+                    <div class="week-card mb-4 p-3 border rounded">
+                        <h6>${week.title}</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Día</th>
+                                    <th>Actividades</th>
+                                    <th>Recursos</th>
+                                    <th>Indicadores</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${week.activities.map(activity => `
+                                    <tr>
+                                        <td>${activity.day}</td>
+                                        <td>${activity.activity}</td>
+                                        <td>${activity.resources}</td>
+                                        <td>${activity.indicators}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            return html;
+        }
+        
+        // ======================
+        // PLANTILLAS
+        // ======================
+        function loadTemplates() {
+            const templates = db.templates.filter(t => t.userId === appState.currentUser.id);
+            const tableBody = document.getElementById('templatesTable');
+            tableBody.innerHTML = '';
+
+            templates.forEach(template => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${template.name}</td>
+                    <td>${template.content.area}</td>
+                    <td>${new Date(template.updatedAt).toLocaleDateString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary use-template" data-id="${template.id}">
+                            <i class="fas fa-play-circle"></i> Usar
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary edit-template" data-id="${template.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-template" data-id="${template.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Event listeners
+            document.querySelectorAll('.use-template').forEach(btn => {
+                btn.addEventListener('click', () => useTemplate(btn.dataset.id));
+            });
+            
+            document.querySelectorAll('.edit-template').forEach(btn => {
+                btn.addEventListener('click', () => editTemplate(btn.dataset.id));
+            });
+            
+            document.querySelectorAll('.delete-template').forEach(btn => {
+                btn.addEventListener('click', () => deleteTemplate(btn.dataset.id));
+            });
+        }
+
+        function useTemplate(templateId) {
+            const template = db.templates.find(t => t.id == templateId);
+            if (!template) return;
+
+            showSection('newPlan');
+            
+            // Llenar formulario con la plantilla
+            document.getElementById('planArea').value = template.content.area || '';
+            
+            // Competencias
+            const competenciesContainer = document.getElementById('competenciesContainer');
+            competenciesContainer.innerHTML = '';
+            (template.content.competencies || []).forEach(comp => {
+                addCompetencyField(comp);
+            });
+            
+            // Objetivos
+            const objectivesContainer = document.getElementById('objectivesContainer');
+            objectivesContainer.innerHTML = '';
+            (template.content.objectives || []).forEach(obj => {
+                addObjectiveField(obj);
+            });
+            
+            Swal.fire('Plantilla aplicada', 'La plantilla se ha cargado correctamente', 'success');
+        }
+
+        function createNewTemplate() {
+            Swal.fire({
+                title: 'Crear nueva plantilla',
+                html: `
+                    <div class="mb-3">
+                        <label for="templateName" class="form-label">Nombre de la plantilla</label>
+                        <input type="text" class="form-control" id="templateName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="templateArea" class="form-label">Área</label>
+                        <select class="form-select" id="templateArea">
+                            <option value="Preescolar">Preescolar</option>
+                            <option value="Cultural y Artística">Cultural y Artística</option>
+                            <option value="Lenguaje">Lenguaje</option>
+                            <option value="Matemáticas">Matemáticas</option>
+                        </select>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Crear',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    const name = document.getElementById('templateName').value;
+                    const area = document.getElementById('templateArea').value;
+                    
+                    if (!name) {
+                        Swal.showValidationMessage('El nombre es requerido');
+                        return false;
+                    }
+                    
+                    return { name, area };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { name, area } = result.value;
+                    
+                    const newTemplate = {
+                        id: db.templates.length + 1,
+                        userId: appState.currentUser.id,
+                        name,
+                        content: {
+                            area,
+                            competencies: [],
+                            objectives: []
+                        },
+                        updatedAt: new Date()
+                    };
+                    
+                    db.templates.push(newTemplate);
+                    saveToStorage();
+                    loadTemplates();
+                    Swal.fire('¡Creada!', 'La plantilla se ha creado correctamente', 'success');
+                }
+            });
+        }
+
+        function editTemplate(templateId) {
+            const template = db.templates.find(t => t.id == templateId);
+            if (!template) return;
+            
+            Swal.fire({
+                title: 'Editar plantilla',
+                html: `
+                    <div class="mb-3">
+                        <label for="editTemplateName" class="form-label">Nombre de la plantilla</label>
+                        <input type="text" class="form-control" id="editTemplateName" value="${template.name}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTemplateArea" class="form-label">Área</label>
+                        <select class="form-select" id="editTemplateArea">
+                            <option value="Preescolar" ${template.content.area === 'Preescolar' ? 'selected' : ''}>Preescolar</option>
+                            <option value="Cultural y Artística" ${template.content.area === 'Cultural y Artística' ? 'selected' : ''}>Cultural y Artística</option>
+                            <option value="Lenguaje" ${template.content.area === 'Lenguaje' ? 'selected' : ''}>Lenguaje</option>
+                            <option value="Matemáticas" ${template.content.area === 'Matemáticas' ? 'selected' : ''}>Matemáticas</option>
+                        </select>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    const name = document.getElementById('editTemplateName').value;
+                    const area = document.getElementById('editTemplateArea').value;
+                    
+                    if (!name) {
+                        Swal.showValidationMessage('El nombre es requerido');
+                        return false;
+                    }
+                    
+                    return { name, area };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { name, area } = result.value;
+                    
+                    template.name = name;
+                    template.content.area = area;
+                    template.updatedAt = new Date();
+                    
+                    saveToStorage();
+                    loadTemplates();
+                    Swal.fire('¡Actualizada!', 'La plantilla se ha actualizado correctamente', 'success');
+                }
+            });
+        }
+
+        function deleteTemplate(templateId) {
+            Swal.fire({
+                title: '¿Estás segura?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, borrarla'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const index = db.templates.findIndex(t => t.id === parseInt(templateId));
+                    if (index !== -1) {
+                        db.templates.splice(index, 1);
+                        saveToStorage();
+                        loadTemplates();
+                        Swal.fire('¡Borrada!', 'La plantilla ha sido eliminada.', 'success');
+                    }
+                }
+            });
+        }
+        
+        // ======================
+        // RECURSOS
+        // ======================
+        function loadResources() {
+            const resources = db.resources.filter(r => r.userId === appState.currentUser.id);
+            const grid = document.getElementById('resourcesGrid');
+            grid.innerHTML = '';
+
+            // Configurar el botón para añadir recursos
+            document.getElementById('addResourceBtn').addEventListener('click', function() {
+                document.getElementById('addResourceForm').reset();
+                document.getElementById('thumbnailGroup').style.display = 'none';
+                const modal = new bootstrap.Modal(document.getElementById('addResourceModal'));
+                modal.show();
+            });
+
+            resources.forEach(resource => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 mb-4';
+                col.innerHTML = `
+                    <div class="card resource-card h-100">
+                        ${resource.type === 'video' ? 
+                            `<img src="${resource.thumbnail}" class="card-img-top" alt="${resource.title}">` : 
+                            `<div class="card-img-top resource-icon bg-light text-center py-4">
+                                <i class="fas fa-${getResourceIcon(resource.type)} fa-4x text-muted"></i>
+                            </div>`
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">${resource.title}</h5>
+                            <p class="card-text">${resource.description}</p>
+                            <div class="resource-actions">
+                                ${resource.type === 'video' ? 
+                                    `<a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-play"></i> Ver
+                                    </a>` : 
+                                    `<button class="btn btn-sm btn-outline-primary view-resource" data-id="${resource.id}">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </button>`
+                                }
+                                <button class="btn btn-sm btn-outline-secondary copy-resource" data-url="${resource.url}">
+                                    <i class="fas fa-link"></i> Copiar URL
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-resource" data-id="${resource.id}">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small>Añadido el ${new Date(resource.createdAt).toLocaleDateString()}</small>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+
+            // Event listeners
+            document.querySelectorAll('.copy-resource').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(btn.dataset.url);
+                    Swal.fire('¡Copiado!', 'El enlace se ha copiado al portapapeles', 'success');
+                });
+            });
+            
+            // Event listener para eliminar recursos
+            document.querySelectorAll('.delete-resource').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const resourceId = parseInt(btn.dataset.id);
+                    Swal.fire({
+                        title: '¿Eliminar recurso?',
+                        text: 'Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Eliminar del array
+                            const idx = db.resources.findIndex(r => r.id === resourceId && r.userId === appState.currentUser.id);
+                            if (idx !== -1) {
+                                db.resources.splice(idx, 1);
+                                saveToStorage();
+                                loadResources();
+                                Swal.fire('¡Eliminado!', 'El recurso ha sido eliminado.', 'success');
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        function getResourceIcon(type) {
+            const icons = {
+                'video': 'film',
+                'song': 'music',
+                'game': 'gamepad',
+                'document': 'file-alt',
+                'link': 'link'
+            };
+            return icons[type] || 'file';
+        }
+        
+        // ======================
+        // CALENDARIO
+        // ======================
+        function initCalendar() {
+            const calendarEl = document.getElementById('fullCalendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: getCalendarEvents(),
+                dateClick: function(info) {
+                    showEventModal(null, info.dateStr);
+                },
+                eventClick: function(info) {
+                    showEventModal(info.event);
+                }
+            });
+            
+            calendar.render();
+            
+            // Botones de navegación
+            document.getElementById('prevMonthBtn').addEventListener('click', () => {
+                calendar.prev();
+            });
+            
+            document.getElementById('nextMonthBtn').addEventListener('click', () => {
+                calendar.next();
+            });
+            
+            document.getElementById('todayBtn').addEventListener('click', () => {
+                calendar.today();
+            });
+        }
+
+        function getCalendarEvents() {
+            return db.events
+                .filter(e => e.userId === appState.currentUser.id)
+                .map(event => ({
+                    id: event.id,
+                    title: event.title,
+                    start: event.date,
+                    description: event.description,
+                    backgroundColor: event.color || '#3a87ad'
+                }));
+        }
+
+        function showEventModal(event, date = null) {
+            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            const form = document.getElementById('eventForm');
+            
+            if (event) {
+                // Editar evento existente
+                document.getElementById('eventTitle').value = event.title;
+                document.getElementById('eventDate').value = event.start;
+                document.getElementById('eventDescription').value = event.extendedProps.description;
+                
+                document.getElementById('deleteEventBtn').style.display = 'block';
+                document.getElementById('deleteEventBtn').onclick = () => {
+                    deleteEvent(event.id);
+                    modal.hide();
+                };
+                
+                document.getElementById('saveEventBtn').onclick = () => {
+                    updateEvent(event.id);
+                    modal.hide();
+                };
+            } else {
+                // Nuevo evento
+                form.reset();
+                if (date) {
+                    document.getElementById('eventDate').value = date;
+                }
+                
+                document.getElementById('deleteEventBtn').style.display = 'none';
+                document.getElementById('saveEventBtn').onclick = () => {
+                    saveNewEvent();
+                    modal.hide();
+                };
+            }
+            
+            modal.show();
+            
+            // Inicializar datepicker
+            flatpickr("#eventDate", {
+                dateFormat: "Y-m-d",
+                defaultDate: date || new Date()
+            });
+        }
+
+        function saveNewEvent() {
+            const eventData = {
+                title: document.getElementById('eventTitle').value,
+                date: document.getElementById('eventDate').value,
+                description: document.getElementById('eventDescription').value,
+                color: '#6a4c93',
+                userId: appState.currentUser.id,
+                createdAt: new Date()
+            };
+            
+            if (!eventData.title) {
+                Swal.fire('Error', 'El título es requerido', 'error');
+                return;
+            }
+            
+            eventData.id = db.events.length + 1;
+            db.events.push(eventData);
+            saveToStorage();
+            
+            calendar.refetchEvents();
+            
+            // Actualizar mini-calendario si estamos en el dashboard
+            if (appState.currentSection === 'dashboard') {
+                initMiniCalendar();
+            }
+            
+            Swal.fire('¡Guardado!', 'El evento se ha creado correctamente', 'success');
+        }
+
+        function updateEvent(eventId) {
+            const event = db.events.find(e => e.id == eventId);
+            if (!event) return;
+            
+            event.title = document.getElementById('eventTitle').value;
+            event.date = document.getElementById('eventDate').value;
+            event.description = document.getElementById('eventDescription').value;
+            
+            saveToStorage();
+            calendar.refetchEvents();
+            
+            // Actualizar mini-calendario si estamos en el dashboard
+            if (appState.currentSection === 'dashboard') {
+                initMiniCalendar();
+            }
+            
+            Swal.fire('¡Actualizado!', 'El evento se ha actualizado correctamente', 'success');
+        }
+
+        function deleteEvent(eventId) {
+            const index = db.events.findIndex(e => e.id == eventId);
+            if (index !== -1) {
+                db.events.splice(index, 1);
+                saveToStorage();
+                calendar.refetchEvents();
+                
+                // Actualizar mini-calendario si estamos en el dashboard
+                if (appState.currentSection === 'dashboard') {
+                    initMiniCalendar();
+                }
+                
+                Swal.fire('¡Eliminado!', 'El evento se ha eliminado correctamente', 'success');
+            }
+        }
+        
+        // ======================
+        // CONFIGURACIÓN
+        // ======================
+        function loadSettings() {
+            const user = appState.currentUser;
+            if (!user.settings) user.settings = {};
+            
+            // Perfil
+            document.getElementById('profileName').value = user.name;
+            document.getElementById('profileEmail').value = user.email;
+            document.getElementById('profileInstitution').value = user.institution;
+            document.getElementById('profileAvatar').src = user.avatar;
+            
+            // Preferencias
+            document.getElementById('themeSelect').value = user.settings.theme || 'light';
+            document.getElementById('notificationsCheck').checked = user.settings.notifications !== false;
+            document.getElementById('languageSelect').value = user.settings.language || 'es';
+            
+            // Aplicar el tema al cargar la configuración
+            applyTheme(user.settings.theme || 'light');
+            
+            // Event listeners
+            document.getElementById('changeAvatarBtn').addEventListener('click', () => {
+                document.getElementById('avatarUpload').click();
+            });
+            
+            document.getElementById('avatarUpload').addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('profileAvatar').src = event.target.result;
+                        user.avatar = event.target.result;
+                        saveToStorage();
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            document.getElementById('exportDataBtn').addEventListener('click', exportUserData);
+            document.getElementById('deleteAccountBtn').addEventListener('click', confirmDeleteAccount);
+            
+            // Guardar preferencias
+            document.getElementById('preferencesForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newTheme = document.getElementById('themeSelect').value;
+                user.settings.theme = newTheme;
+                user.settings.notifications = document.getElementById('notificationsCheck').checked;
+                user.settings.language = document.getElementById('languageSelect').value;
+                
+                // Aplicar el tema cuando se guarden las preferencias
+                applyTheme(newTheme);
+                
+                saveToStorage();
+                Swal.fire('¡Guardado!', 'Tus preferencias se han actualizado', 'success');
+            });
+            
+            // Cambiar tema inmediatamente al seleccionar
+            document.getElementById('themeSelect').addEventListener('change', function() {
+                const theme = this.value;
+                applyTheme(theme);
+            });
+            
+            // Guardar perfil
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                user.name = document.getElementById('profileName').value;
+                user.email = document.getElementById('profileEmail').value;
+                user.institution = document.getElementById('profileInstitution').value;
+                
+                // Actualizar UI
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userInstitution').textContent = user.institution;
+                
+                saveToStorage();
+                Swal.fire('¡Guardado!', 'Tu perfil se ha actualizado', 'success');
+            });
+        }
+
+        function exportUserData() {
+            const userData = {
+                user: appState.currentUser,
+                plans: db.plans.filter(p => p.userId === appState.currentUser.id),
+                templates: db.templates.filter(t => t.userId === appState.currentUser.id),
+                resources: db.resources.filter(r => r.userId === appState.currentUser.id),
+                events: db.events.filter(e => e.userId === appState.currentUser.id)
+            };
+            
+            const dataStr = JSON.stringify(userData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `planificador-datos-${new Date().toISOString()}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            Swal.fire('¡Exportado!', 'Tus datos se han descargado correctamente', 'success');
+        }
+
+        function confirmDeleteAccount() {
+            Swal.fire({
+                title: '¿Estás segura?',
+                text: "¡Esta acción no se puede deshacer! Se eliminarán todos tus datos permanentemente.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar cuenta',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Eliminar todos los datos del usuario
+                    const userId = appState.currentUser.id;
+                    
+                    db.plans = db.plans.filter(p => p.userId !== userId);
+                    db.templates = db.templates.filter(t => t.userId !== userId);
+                    db.resources = db.resources.filter(r => r.userId !== userId);
+                    db.events = db.events.filter(e => e.userId !== userId);
+                    db.users = db.users.filter(u => u.id !== userId);
+                    
+                    logoutUser();
+                    saveToStorage();
+                    Swal.fire('¡Eliminada!', 'Tu cuenta y todos tus datos han sido eliminados', 'success');
+                }
+            });
+        }
+        // Función para aplicar el tema seleccionado
+        function applyTheme(theme) {
+            const body = document.body;
+            body.classList.remove('theme-light', 'theme-dark', 'theme-pink');
+            
+            if (theme === 'dark') {
+                body.classList.add('theme-dark');
+            } else if (theme === 'light') {
+                body.classList.add('theme-light');
+            } else if (theme === 'pink') {
+                body.classList.add('theme-pink');
+            } else if (theme === 'auto') {
+                // Detecta preferencia del sistema
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    body.classList.add('theme-dark');
+                } else {
+                    body.classList.add('theme-light');
+                }
+                
+                // Escuchar cambios en la preferencia del sistema
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                    if (appState.currentUser && appState.currentUser.settings && appState.currentUser.settings.theme === 'auto') {
+                        body.classList.remove('theme-light', 'theme-dark', 'theme-pink');
+                        body.classList.add(e.matches ? 'theme-dark' : 'theme-light');
+                    }
+                });
+            }
+        }
+
+        // Configuración de la barra lateral en móvil
+        function setupMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('show-mobile');
+                });
+                
+                // Cerrar sidebar al hacer clic en un enlace de navegación
+                sidebar.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth <= 768) {
+                            sidebar.classList.remove('show-mobile');
+                        }
+                    });
+                });
+                
+                // Cerrar sidebar al hacer clic fuera
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768 && sidebar.classList.contains('show-mobile')) {
+                        if (!sidebar.contains(e.target) && e.target !== toggleBtn) {
+                            sidebar.classList.remove('show-mobile');
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Función para configurar los botones de Compartir y Exportar en el Dashboard
+        function setupDashboardButtons() {
+            const dashboardSection = document.getElementById('dashboardSection');
+            if (!dashboardSection) return;
+
+            // Busca los botones por texto para mayor robustez
+            const btns = dashboardSection.querySelectorAll('.btn-group .btn-outline-secondary');
+            let shareBtn = null, exportBtn = null;
+            btns.forEach(btn => {
+                if (btn.textContent.trim().toLowerCase().includes('compartir')) shareBtn = btn;
+                if (btn.textContent.trim().toLowerCase().includes('exportar')) exportBtn = btn;
+            });
+
+            // Compartir: Web Share API o copiar enlace
+            if (shareBtn) {
+                shareBtn.addEventListener('click', function() {
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'Mi Dashboard de Planificaciones',
+                            text: 'Mira mi dashboard de planificaciones didácticas.',
+                            url: window.location.href
+                        }).catch(() => {
+                            // Si falla, copia al portapapeles
+                            navigator.clipboard.writeText(window.location.href);
+                            Swal.fire('¡Enlace copiado!', 'Puedes compartirlo donde quieras.', 'success');
+                        });
+                    } else {
+                        navigator.clipboard.writeText(window.location.href);
+                        Swal.fire('¡Enlace copiado!', 'Puedes compartirlo donde quieras.', 'success');
+                    }
+                });
+            }
+
+            // Exportar: PDF del dashboard usando html2pdf.js
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    // Muestra un mensaje de carga
+                    Swal.fire({
+                        title: 'Generando PDF...',
+                        text: 'Por favor espera un momento',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Pequeño retraso para permitir que se muestre el mensaje
+                    setTimeout(() => {
+                        // Crea una copia del dashboard para exportar sin botones de acción
+                        const dashboardClone = dashboardSection.cloneNode(true);
+                        const actionButtons = dashboardClone.querySelector('.btn-toolbar');
+                        if (actionButtons) actionButtons.remove();
+
+                        // Exporta el dashboard como PDF
+                        html2pdf()
+                            .from(dashboardClone)
+                            .set({
+                                margin: 10,
+                                filename: 'dashboard-planificaciones.pdf',
+                                image: { type: 'jpeg', quality: 0.98 },
+                                html2canvas: { scale: 2 },
+                                jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+                            })
+                            .save()
+                            .then(() => {
+                                Swal.fire('¡Listo!', 'Tu dashboard ha sido exportado como PDF.', 'success');
+                            })
+                            .catch(err => {
+                                console.error('Error al exportar PDF:', err);
+                                Swal.fire('Error', 'No se pudo generar el PDF. Intenta nuevamente.', 'error');
+                            });
+                    }, 500);
+                });
+            }
+        }
+
+        // Gestión del formulario de recursos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar/ocultar campo de miniatura solo para videos
+            document.addEventListener('change', function(e) {
+                if (e.target && e.target.id === 'resourceType') {
+                    document.getElementById('thumbnailGroup').style.display = 
+                        e.target.value === 'video' ? '' : 'none';
+                }
+            });
+
+            // Guardar el recurso al enviar el formulario
+            document.addEventListener('submit', function(e) {
+                if (e.target && e.target.id === 'addResourceForm') {
+                    e.preventDefault();
+                    const title = document.getElementById('resourceTitle').value.trim();
+                    const description = document.getElementById('resourceDescription').value.trim();
+                    const type = document.getElementById('resourceType').value;
+                    const url = document.getElementById('resourceUrl').value.trim();
+                    const thumbnail = document.getElementById('resourceThumbnail').value.trim();
+
+                    if (!title || !description || !type || !url) {
+                        Swal.fire('Error', 'Todos los campos son obligatorios', 'error');
+                        return;
+                    }
+
+                    // Si es video y no hay miniatura, intenta generar una de YouTube
+                    let thumb = thumbnail;
+                    if (type === 'video' && !thumb) {
+                        // Si es un video de YouTube, genera la miniatura automáticamente
+                        const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
+                        if (ytMatch) {
+                            thumb = `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+                        }
+                    }
+
+                    db.resources.push({
+                        id: db.resources.length ? Math.max(...db.resources.map(r => r.id)) + 1 : 1,
+                        userId: appState.currentUser.id,
+                        title,
+                        description,
+                        type,
+                        url,
+                        thumbnail: thumb,
+                        createdAt: new Date()
+                    });
+                    
+                    saveToStorage();
+
+                    // Cierra el modal
+                    bootstrap.Modal.getInstance(document.getElementById('addResourceModal')).hide();
+
+                    // Recarga la grilla
+                    loadResources();
+
+                    Swal.fire('¡Guardado!', 'El recurso se ha añadido correctamente', 'success');
+                }
+            });
+
+            // Configuración para importar recursos externos
+            const importBtn = document.getElementById('importResourceBtn');
+            if (importBtn) {
+                importBtn.addEventListener('click', function() {
+                    const modal = new bootstrap.Modal(document.getElementById('importResourceModal'));
+                    document.getElementById('importResourceForm').reset();
+                    modal.show();
+                });
+            }
+
+            // Guardar recurso importado
+            const saveImportBtn = document.getElementById('importResourceSaveBtn');
+            if (saveImportBtn) {
+                saveImportBtn.addEventListener('click', async function() {
+                    const url = document.getElementById('importResourceUrl').value.trim();
+                    const title = document.getElementById('importResourceTitle').value.trim();
+                    const desc = document.getElementById('importResourceDesc').value.trim();
+
+                    if (!url) {
+                        Swal.fire('Error', 'Debes ingresar un enlace válido.', 'error');
+                        return;
+                    }
+
+                    let type = 'link';
+                    let thumbnail = '';
+                    let resourceTitle = title;
+                    let resourceDesc = desc;
+
+                    // Detectar YouTube
+                    const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
+                    if (ytMatch) {
+                        type = 'video';
+                        const videoId = ytMatch[1];
+                        thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+                        // Obtener título real de YouTube vía noembed (opcional)
+                        if (!title) {
+                            try {
+                                const resp = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
+                                const data = await resp.json();
+                                resourceTitle = data.title || 'Video de YouTube';
+                            } catch {
+                                resourceTitle = 'Video de YouTube';
+                            }
+                        }
+                        if (!desc) resourceDesc = 'Recurso importado desde YouTube';
+                    }
+
+                    // Detectar Google Drive
+                    const gdMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+                    if (gdMatch) {
+                        type = 'document';
+                        thumbnail = 'https://ssl.gstatic.com/docs/doclist/images/mediatype/icon_1_document_x32.png';
+                        if (!title) resourceTitle = 'Archivo de Google Drive';
+                        if (!desc) resourceDesc = 'Recurso importado desde Google Drive';
+                    }
+
+                    // Guardar en la base de datos simulada
+                    db.resources.push({
+                        id: db.resources.length + 1,
+                        userId: appState.currentUser.id,
+                        title: resourceTitle || url,
+                        description: resourceDesc,
+                        type,
+                        url,
+                        thumbnail,
+                        createdAt: new Date()
+                    });
+
+                    saveToStorage();
+                    
+                    // Cierra el modal
+                    bootstrap.Modal.getInstance(document.getElementById('importResourceModal')).hide();
+                    
+                    // Recarga la grilla
+                    loadResources();
+
+                    Swal.fire('¡Importado!', 'El recurso se ha añadido correctamente.', 'success');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
