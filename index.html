@@ -394,6 +394,24 @@
     <div id="mainSection" class="main-container">
         <!-- Barra Lateral -->
         <div class="sidebar col-md-3 col-lg-2 d-md-block">
+        
+        <!-- Panel flotante de Spotify -->
+        <div id="spotifyMusicPanel" style="display:none;position:fixed;bottom:20px;right:20px;z-index:2000;width:350px;">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fab fa-spotify"></i> Spotify</span>
+                    <button class="btn btn-sm btn-outline-secondary" id="closeSpotifyPanel">&times;</button>
+                </div>
+                <div class="card-body">
+                    <div id="spotifyPlayerContainer" style="min-height:80px;">
+                        <div class="text-center text-muted">No hay música seleccionada</div>
+                    </div>
+                    <button class="btn btn-sm btn-primary mt-2 w-100" id="chooseSpotifyTrackBtn">
+                        <i class="fas fa-music"></i> Elegir música
+                    </button>
+                </div>
+            </div>
+        </div>
             <div class="text-center mb-4">
                 <img src="https://ui-avatars.com/api/?name=D+B&background=random" alt="Usuario" class="user-avatar mb-2">
                 <h6 id="userName">Daniela Betancourt</h6>
@@ -434,6 +452,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#settings" data-section="settings">
                         <i class="fas fa-cog"></i> Configuración
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="spotifyMusicBtn">
+                        <i class="fab fa-spotify"></i> Música
                     </a>
                 </li>
                 <li class="nav-item mt-3">
@@ -1019,6 +1042,26 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="importResourceSaveBtn">Importar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Spotify -->
+    <div class="modal fade" id="spotifyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Escuchar música de Spotify</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="spotifyUrlInput" class="form-label">Pega el enlace de una canción, playlist o álbum de Spotify:</label>
+                    <input type="url" class="form-control" id="spotifyUrlInput" placeholder="https://open.spotify.com/..." required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="setSpotifyTrackBtn">Escuchar</button>
                 </div>
             </div>
         </div>
@@ -2864,5 +2907,84 @@
             }
         });
     </script>
+    
+    <!-- Script de integración de Spotify -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos
+            const musicBtn = document.getElementById('spotifyMusicBtn');
+            const musicPanel = document.getElementById('spotifyMusicPanel');
+            const closePanelBtn = document.getElementById('closeSpotifyPanel');
+            const chooseTrackBtn = document.getElementById('chooseSpotifyTrackBtn');
+            const playerContainer = document.getElementById('spotifyPlayerContainer');
+            const spotifyModal = document.getElementById('spotifyModal');
+            const spotifyUrlInput = document.getElementById('spotifyUrlInput');
+            const setTrackBtn = document.getElementById('setSpotifyTrackBtn');
+
+            // Mostrar/ocultar panel
+            if (musicBtn && musicPanel) {
+                musicBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    musicPanel.style.display = musicPanel.style.display === 'none' ? 'block' : 'none';
+                });
+            }
+            if (closePanelBtn) {
+                closePanelBtn.addEventListener('click', function() {
+                    musicPanel.style.display = 'none';
+                });
+            }
+
+            // Mostrar modal para elegir música
+            if (chooseTrackBtn) {
+                chooseTrackBtn.addEventListener('click', function() {
+                    spotifyUrlInput.value = '';
+                    const modal = new bootstrap.Modal(spotifyModal);
+                    modal.show();
+                });
+            }
+
+            // Al hacer clic en "Escuchar", embebe el reproductor
+            if (setTrackBtn) {
+                setTrackBtn.addEventListener('click', function() {
+                    const url = spotifyUrlInput.value.trim();
+                    if (!url || !/^https:\/\/open\.spotify\.com\//.test(url)) {
+                        Swal.fire('Error', 'Debes ingresar un enlace válido de Spotify.', 'error');
+                        return;
+                    }
+                    // Extraer tipo y ID de Spotify
+                    const match = url.match(/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+                    if (!match) {
+                        Swal.fire('Error', 'Solo se admiten canciones, álbumes o playlists de Spotify.', 'error');
+                        return;
+                    }
+                    const type = match[1];
+                    const id = match[2];
+                    // Embed
+                    playerContainer.innerHTML = `
+                        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0" width="100%" height="80" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"></iframe>
+                    `;
+                    // Cierra el modal
+                    bootstrap.Modal.getInstance(spotifyModal).hide();
+                    
+                    // Guardar en localStorage para persistencia
+                    localStorage.setItem('spotify_last_embed', JSON.stringify({type, id}));
+                });
+            }
+            
+            // Cargar último reproductor usado (persistencia)
+            const lastEmbed = localStorage.getItem('spotify_last_embed');
+            if (lastEmbed) {
+                try {
+                    const {type, id} = JSON.parse(lastEmbed);
+                    playerContainer.innerHTML = `
+                        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0" width="100%" height="80" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"></iframe>
+                    `;
+                } catch (e) {
+                    console.error('Error cargando último reproductor de Spotify:', e);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
+
