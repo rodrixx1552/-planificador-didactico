@@ -450,6 +450,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="#students" data-section="students">
+                        <i class="fas fa-user-graduate"></i> Estudiantes
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#settings" data-section="settings">
                         <i class="fas fa-cog"></i> Configuración
                     </a>
@@ -903,6 +908,42 @@
             </div>
             
             
+            <!-- Sección de Estudiantes -->
+            <div id="studentsSection" class="content-section" style="display: none;">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Estudiantes</h1>
+                    <div>
+                        <button class="btn btn-primary" id="addStudentBtn">
+                            <i class="fas fa-plus"></i> Añadir Estudiante
+                        </button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="studentShiftFilter" class="form-label">Filtrar por turno:</label>
+                    <select class="form-select w-auto d-inline-block" id="studentShiftFilter">
+                        <option value="all">Todos</option>
+                        <option value="matutino">Matutino</option>
+                        <option value="vespertino">Vespertino</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Curso</th>
+                                <th>Turno</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Se llena con JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
             <!-- Sección de Configuración -->
             <div id="settingsSection" class="content-section" style="display: none;">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -1014,6 +1055,47 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para añadir/editar estudiante -->
+    <div class="modal fade" id="studentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="studentForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="studentModalTitle">Añadir Estudiante</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="studentId">
+                        <div class="mb-3">
+                            <label for="studentFirstName" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="studentFirstName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="studentLastName" class="form-label">Apellido</label>
+                            <input type="text" class="form-control" id="studentLastName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="studentCourse" class="form-label">Curso</label>
+                            <input type="text" class="form-control" id="studentCourse" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="studentShift" class="form-label">Turno</label>
+                            <select class="form-select" id="studentShift" required>
+                                <option value="">Selecciona turno</option>
+                                <option value="matutino">Matutino</option>
+                                <option value="vespertino">Vespertino</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1150,13 +1232,15 @@
         - Eliminada la sección de entretenimiento
         - Eliminado el botón "Sugerir con IA" de objetivos
         - Eliminada la integración con Spotify/música
+        - Añadida la sección de estudiantes con turnos
         */
         const db = {
             users: [],
             plans: [],
             templates: [],
             resources: [],
-            events: []
+            events: [],
+            students: []
         };
         
         // Estado de la aplicación
@@ -1244,6 +1328,63 @@
             setupEventHandlers();
         });
         
+        // === Funciones para la sección de estudiantes ===
+        function loadStudentsSection() {
+            renderStudentsTable();
+            document.getElementById('studentShiftFilter').value = 'all';
+        }
+
+        // Renderiza la tabla de estudiantes
+        function renderStudentsTable() {
+            const tbody = document.querySelector('#studentsTable tbody');
+            const filter = document.getElementById('studentShiftFilter').value;
+            const students = db.students.filter(s => s.userId === appState.currentUser.id && (filter === 'all' || s.shift === filter));
+            tbody.innerHTML = '';
+            students.forEach(student => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${student.firstName}</td>
+                    <td>${student.lastName}</td>
+                    <td>${student.course}</td>
+                    <td>${capitalize(student.shift)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary edit-student" data-id="${student.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-student" data-id="${student.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Capitaliza la primera letra
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Mostrar modal para añadir/editar estudiante
+        function showStudentModal(editId = null) {
+            const modal = new bootstrap.Modal(document.getElementById('studentModal'));
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentModalTitle').textContent = editId ? 'Editar Estudiante' : 'Añadir Estudiante';
+
+            if (editId) {
+                const student = db.students.find(s => s.id === parseInt(editId));
+                if (student) {
+                    document.getElementById('studentId').value = student.id;
+                    document.getElementById('studentFirstName').value = student.firstName;
+                    document.getElementById('studentLastName').value = student.lastName;
+                    document.getElementById('studentCourse').value = student.course;
+                    document.getElementById('studentShift').value = student.shift;
+                }
+            }
+            modal.show();
+        }
+
         function loadSampleData() {
             // Usuario de prueba
             db.users.push({
@@ -1334,9 +1475,109 @@
                 color: "#6a4c93",
                 createdAt: new Date()
             });
+            
+            // Estudiantes de prueba
+            db.students.push({
+                id: 1,
+                userId: 1,
+                firstName: "Ana",
+                lastName: "Gómez",
+                course: "Primero de Básica A",
+                shift: "matutino",
+                createdAt: new Date()
+            });
+            
+            db.students.push({
+                id: 2,
+                userId: 1,
+                firstName: "Carlos",
+                lastName: "Pérez",
+                course: "Primero de Básica B",
+                shift: "vespertino",
+                createdAt: new Date()
+            });
         }
         
         function setupEventHandlers() {
+            // Estudiantes
+            document.getElementById('addStudentBtn').addEventListener('click', function() {
+                showStudentModal();
+            });
+            
+            document.getElementById('studentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = document.getElementById('studentId').value;
+                const firstName = document.getElementById('studentFirstName').value.trim();
+                const lastName = document.getElementById('studentLastName').value.trim();
+                const course = document.getElementById('studentCourse').value.trim();
+                const shift = document.getElementById('studentShift').value;
+
+                if (!firstName || !lastName || !course || !shift) {
+                    Swal.fire('Error', 'Todos los campos son obligatorios', 'error');
+                    return;
+                }
+
+                if (id) {
+                    // Editar
+                    const student = db.students.find(s => s.id === parseInt(id));
+                    if (student) {
+                        student.firstName = firstName;
+                        student.lastName = lastName;
+                        student.course = course;
+                        student.shift = shift;
+                    }
+                    Swal.fire('¡Actualizado!', 'El estudiante ha sido actualizado', 'success');
+                } else {
+                    // Nuevo
+                    db.students.push({
+                        id: db.students.length ? Math.max(...db.students.map(s => s.id)) + 1 : 1,
+                        userId: appState.currentUser.id,
+                        firstName,
+                        lastName,
+                        course,
+                        shift,
+                        createdAt: new Date()
+                    });
+                    Swal.fire('¡Guardado!', 'El estudiante ha sido añadido', 'success');
+                }
+                saveToStorage();
+                bootstrap.Modal.getInstance(document.getElementById('studentModal')).hide();
+                renderStudentsTable();
+            });
+            
+            document.getElementById('studentShiftFilter').addEventListener('change', renderStudentsTable);
+            
+            // Delegación de eventos para estudiantes
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.edit-student')) {
+                    const id = e.target.closest('.edit-student').dataset.id;
+                    showStudentModal(id);
+                }
+                
+                if (e.target.closest('.delete-student')) {
+                    const id = e.target.closest('.delete-student').dataset.id;
+                    Swal.fire({
+                        title: '¿Eliminar estudiante?',
+                        text: 'Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sí, eliminar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const idx = db.students.findIndex(s => s.id === parseInt(id) && s.userId === appState.currentUser.id);
+                            if (idx !== -1) {
+                                db.students.splice(idx, 1);
+                                saveToStorage();
+                                renderStudentsTable();
+                                Swal.fire('¡Eliminado!', 'El estudiante ha sido eliminado.', 'success');
+                            }
+                        }
+                    });
+                }
+            });
+            
             // Autenticación
             document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -1528,6 +1769,9 @@
                     break;
                 case 'calendar':
                     initCalendar();
+                    break;
+                case 'students':
+                    loadStudentsSection();
                     break;
                 case 'settings':
                     loadSettings();
@@ -3254,3 +3498,4 @@
             }
         });
     </script>
+
