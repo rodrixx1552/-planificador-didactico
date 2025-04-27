@@ -173,7 +173,7 @@
             border-bottom: 1px solid rgba(0,0,0,0.05);
             font-weight: 600;
         }
-        
+       
         .btn-primary {
             background: var(--primary);
             border: none;
@@ -571,9 +571,32 @@
                                         <label for="planArea" class="form-label">Área</label>
                                         <select class="form-select" id="planArea">
                                             <option value="Preescolar">Preescolar</option>
-                                            <option value="Cultural y Artística">Cultural y Artística</option>
                                             <option value="Lenguaje">Lenguaje</option>
                                             <option value="Matemáticas">Matemáticas</option>
+                                            <option value="Ciencias Naturales">Ciencias Naturales</option>
+                                            <option value="Ciencias Sociales">Ciencias Sociales</option>
+                                            <option value="Educación Física">Educación Física</option>
+                                            <option value="Educación Artística">Educación Artística</option>
+                                            <option value="Cultural y Artística">Cultural y Artística</option>
+                                            <option value="Educación para la Ciudadanía">Educación para la Ciudadanía</option>
+                                            <option value="Inglés">Inglés / Idioma Extranjero</option>
+                                            <option value="Informática">Informática / Tecnología</option>
+                                            <option value="Educación Religiosa">Educación Religiosa</option>
+                                            <option value="Emprendimiento">Emprendimiento</option>
+                                            <option value="Educación Ambiental">Educación Ambiental</option>
+                                            <option value="Filosofía">Filosofía</option>
+                                            <option value="Física">Física</option>
+                                            <option value="Química">Química</option>
+                                            <option value="Biología">Biología</option>
+                                            <option value="Historia">Historia</option>
+                                            <option value="Geografía">Geografía</option>
+                                            <option value="Música">Música</option>
+                                            <option value="Artes Plásticas">Artes Plásticas</option>
+                                            <option value="Tutoría">Tutoría / Orientación</option>
+                                            <option value="Educación para la Salud">Educación para la Salud</option>
+                                            <option value="Robótica">Robótica</option>
+                                            <option value="Educación Financiera">Educación Financiera</option>
+                                            <option value="Otra">Otra</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1020,6 +1043,12 @@
                                 <option value="song">Canción</option>
                                 <option value="game">Juego</option>
                                 <option value="document">Documento</option>
+                                <option value="pdf">PDF</option>
+                                <option value="presentation">Presentación</option>
+                                <option value="image">Imagen</option>
+                                <option value="audio">Audio</option>
+                                <option value="book">Libro</option>
+                                <option value="infographic">Infografía</option>
                                 <option value="link">Enlace</option>
                             </select>
                         </div>
@@ -2244,9 +2273,32 @@
                         <label for="templateArea" class="form-label">Área</label>
                         <select class="form-select" id="templateArea">
                             <option value="Preescolar">Preescolar</option>
-                            <option value="Cultural y Artística">Cultural y Artística</option>
                             <option value="Lenguaje">Lenguaje</option>
                             <option value="Matemáticas">Matemáticas</option>
+                            <option value="Ciencias Naturales">Ciencias Naturales</option>
+                            <option value="Ciencias Sociales">Ciencias Sociales</option>
+                            <option value="Educación Física">Educación Física</option>
+                            <option value="Educación Artística">Educación Artística</option>
+                            <option value="Cultural y Artística">Cultural y Artística</option>
+                            <option value="Educación para la Ciudadanía">Educación para la Ciudadanía</option>
+                            <option value="Inglés">Inglés / Idioma Extranjero</option>
+                            <option value="Informática">Informática / Tecnología</option>
+                            <option value="Educación Religiosa">Educación Religiosa</option>
+                            <option value="Emprendimiento">Emprendimiento</option>
+                            <option value="Educación Ambiental">Educación Ambiental</option>
+                            <option value="Filosofía">Filosofía</option>
+                            <option value="Física">Física</option>
+                            <option value="Química">Química</option>
+                            <option value="Biología">Biología</option>
+                            <option value="Historia">Historia</option>
+                            <option value="Geografía">Geografía</option>
+                            <option value="Música">Música</option>
+                            <option value="Artes Plásticas">Artes Plásticas</option>
+                            <option value="Tutoría">Tutoría / Orientación</option>
+                            <option value="Educación para la Salud">Educación para la Salud</option>
+                            <option value="Robótica">Robótica</option>
+                            <option value="Educación Financiera">Educación Financiera</option>
+                            <option value="Otra">Otra</option>
                         </select>
                     </div>
                 `,
@@ -2303,9 +2355,32 @@
                         <label for="editTemplateArea" class="form-label">Área</label>
                         <select class="form-select" id="editTemplateArea">
                             <option value="Preescolar" ${template.content.area === 'Preescolar' ? 'selected' : ''}>Preescolar</option>
-                            <option value="Cultural y Artística" ${template.content.area === 'Cultural y Artística' ? 'selected' : ''}>Cultural y Artística</option>
                             <option value="Lenguaje" ${template.content.area === 'Lenguaje' ? 'selected' : ''}>Lenguaje</option>
                             <option value="Matemáticas" ${template.content.area === 'Matemáticas' ? 'selected' : ''}>Matemáticas</option>
+                            <option value="Ciencias Naturales" ${template.content.area === 'Ciencias Naturales' ? 'selected' : ''}>Ciencias Naturales</option>
+                            <option value="Ciencias Sociales" ${template.content.area === 'Ciencias Sociales' ? 'selected' : ''}>Ciencias Sociales</option>
+                            <option value="Educación Física" ${template.content.area === 'Educación Física' ? 'selected' : ''}>Educación Física</option>
+                            <option value="Educación Artística" ${template.content.area === 'Educación Artística' ? 'selected' : ''}>Educación Artística</option>
+                            <option value="Cultural y Artística" ${template.content.area === 'Cultural y Artística' ? 'selected' : ''}>Cultural y Artística</option>
+                            <option value="Educación para la Ciudadanía" ${template.content.area === 'Educación para la Ciudadanía' ? 'selected' : ''}>Educación para la Ciudadanía</option>
+                            <option value="Inglés" ${template.content.area === 'Inglés' ? 'selected' : ''}>Inglés / Idioma Extranjero</option>
+                            <option value="Informática" ${template.content.area === 'Informática' ? 'selected' : ''}>Informática / Tecnología</option>
+                            <option value="Educación Religiosa" ${template.content.area === 'Educación Religiosa' ? 'selected' : ''}>Educación Religiosa</option>
+                            <option value="Emprendimiento" ${template.content.area === 'Emprendimiento' ? 'selected' : ''}>Emprendimiento</option>
+                            <option value="Educación Ambiental" ${template.content.area === 'Educación Ambiental' ? 'selected' : ''}>Educación Ambiental</option>
+                            <option value="Filosofía" ${template.content.area === 'Filosofía' ? 'selected' : ''}>Filosofía</option>
+                            <option value="Física" ${template.content.area === 'Física' ? 'selected' : ''}>Física</option>
+                            <option value="Química" ${template.content.area === 'Química' ? 'selected' : ''}>Química</option>
+                            <option value="Biología" ${template.content.area === 'Biología' ? 'selected' : ''}>Biología</option>
+                            <option value="Historia" ${template.content.area === 'Historia' ? 'selected' : ''}>Historia</option>
+                            <option value="Geografía" ${template.content.area === 'Geografía' ? 'selected' : ''}>Geografía</option>
+                            <option value="Música" ${template.content.area === 'Música' ? 'selected' : ''}>Música</option>
+                            <option value="Artes Plásticas" ${template.content.area === 'Artes Plásticas' ? 'selected' : ''}>Artes Plásticas</option>
+                            <option value="Tutoría" ${template.content.area === 'Tutoría' ? 'selected' : ''}>Tutoría / Orientación</option>
+                            <option value="Educación para la Salud" ${template.content.area === 'Educación para la Salud' ? 'selected' : ''}>Educación para la Salud</option>
+                            <option value="Robótica" ${template.content.area === 'Robótica' ? 'selected' : ''}>Robótica</option>
+                            <option value="Educación Financiera" ${template.content.area === 'Educación Financiera' ? 'selected' : ''}>Educación Financiera</option>
+                            <option value="Otra" ${template.content.area === 'Otra' ? 'selected' : ''}>Otra</option>
                         </select>
                     </div>
                 `,
@@ -2381,23 +2456,37 @@
                 col.className = 'col-md-4 mb-4';
                 col.innerHTML = `
                     <div class="card resource-card h-100">
-                        ${resource.type === 'video' ? 
-                            `<img src="${resource.thumbnail}" class="card-img-top" alt="${resource.title}">` : 
-                            `<div class="card-img-top resource-icon bg-light text-center py-4">
-                                <i class="fas fa-${getResourceIcon(resource.type)} fa-4x text-muted"></i>
-                            </div>`
+                        ${
+                            resource.type === 'video'
+                                ? `<img src="${resource.thumbnail}" class="card-img-top" alt="${resource.title}">`
+                                : resource.type === 'image'
+                                    ? `<img src="${resource.url}" class="card-img-top" alt="${resource.title}">`
+                                    : `<div class="card-img-top resource-icon bg-light text-center py-4">
+                                        <i class="fas fa-${getResourceIcon(resource.type)} fa-4x text-muted"></i>
+                                    </div>`
                         }
                         <div class="card-body">
                             <h5 class="card-title">${resource.title}</h5>
                             <p class="card-text">${resource.description}</p>
                             <div class="resource-actions">
-                                ${resource.type === 'video' ? 
-                                    `<a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-play"></i> Ver
-                                    </a>` : 
-                                    `<button class="btn btn-sm btn-outline-primary view-resource" data-id="${resource.id}">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </button>`
+                                ${
+                                    resource.type === 'video'
+                                        ? `<a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-play"></i> Ver
+                                        </a>`
+                                        : resource.type === 'image'
+                                            ? `<a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> Ver Imagen
+                                            </a>`
+                                            : resource.type === 'pdf'
+                                                ? `<a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-file-pdf"></i> Ver PDF
+                                                </a>`
+                                                : resource.type === 'audio'
+                                                    ? `<audio controls src="${resource.url}" style="width:100%;margin-bottom:10px;"></audio>`
+                                                    : `<a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i> Ver
+                                                    </a>`
                                 }
                                 <button class="btn btn-sm btn-outline-secondary copy-resource" data-url="${resource.url}">
                                     <i class="fas fa-link"></i> Copiar URL
@@ -2458,6 +2547,12 @@
                 'song': 'music',
                 'game': 'gamepad',
                 'document': 'file-alt',
+                'pdf': 'file-pdf',
+                'presentation': 'chalkboard',
+                'image': 'image',
+                'audio': 'headphones',
+                'book': 'book',
+                'infographic': 'chart-bar',
                 'link': 'link'
             };
             return icons[type] || 'file';
@@ -2969,11 +3064,21 @@
 
         // Gestión del formulario de recursos
         document.addEventListener('DOMContentLoaded', function() {
-            // Mostrar/ocultar campo de miniatura solo para videos
+            // Mostrar/ocultar campo de miniatura para videos e imágenes
             document.addEventListener('change', function(e) {
                 if (e.target && e.target.id === 'resourceType') {
                     document.getElementById('thumbnailGroup').style.display = 
-                        e.target.value === 'video' ? '' : 'none';
+                        (e.target.value === 'video' || e.target.value === 'image') ? '' : 'none';
+                    
+                    // Actualizar el texto de la etiqueta según el tipo
+                    const label = document.querySelector('label[for="resourceThumbnail"]');
+                    if (label) {
+                        if (e.target.value === 'video') {
+                            label.textContent = 'Miniatura (opcional, solo videos)';
+                        } else if (e.target.value === 'image') {
+                            label.textContent = 'URL alternativa de miniatura (opcional)';
+                        }
+                    }
                 }
             });
 
@@ -3000,6 +3105,11 @@
                         if (ytMatch) {
                             thumb = `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`;
                         }
+                    }
+                    
+                    // Para imágenes, usar la URL como miniatura
+                    if (type === 'image' && !thumb) {
+                        thumb = url;
                     }
 
                     db.resources.push({
