@@ -1152,6 +1152,27 @@
         </div>
     </div>
 
+    <!-- Modal para la checklist de materiales -->
+    <div class="modal fade" id="materialsChecklistModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="materialsChecklistForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Lista de materiales de <span id="materialsStudentName"></span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" style="max-height:60vh;overflow-y:auto;">
+                        <div id="materialsChecklistContainer"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para importar recursos -->
     <div class="modal fade" id="importResourceModal" tabindex="-1">
         <div class="modal-dialog">
@@ -1334,6 +1355,66 @@
             document.getElementById('studentShiftFilter').value = 'all';
         }
 
+        // Lista de materiales escolares
+        const MATERIALS_LIST = [
+            "1 frasco de goma de 250 ml",
+            "1 goma en barra",
+            "1 tijera punta redonda",
+            "2 frasco de témpera de 500 ml color (verde y naranja)",
+            "2 cajas de 12 crayones triangulares",
+            "3 cajas de 12 lápices de colores triangulares",
+            "1 caja de de marcadores de 12 jumbo",
+            "2 cajas de lápices de papel triangular grueso",
+            "3 pliego de papel crepé (diferentes colores)",
+            "2 fundas de papel brillantes A4 (diferentes colores)",
+            "2 resmas de hojas papel A4",
+            "24 sobres manilas A3",
+            "10 barras de silicón fina",
+            "50 formato de cartulinas marfil lisa blanca A4",
+            "3 marcadores acrílicos (rojo, azul y negro)",
+            "1 frasco de 250 ml de escarcha color rojo verde o amarillo",
+            "2 folders tamaño A4",
+            "2 carpetas plásticas formato A4",
+            "3 pliegos de fómix escarchados (verde, rosado y rojo)",
+            "3 pliegos de fómix normal (verde, rosado y rojo)",
+            "2 cinta de papel gruesa marca 3 mm",
+            "1 paquete de protectores de hojas grueso de 10 unidades",
+            "50 hojas de papel bond formato A3",
+            "50 cartulinas color blanco formato A3",
+            "2 madejas de lana cualquier color",
+            "2 pincel mediano plano",
+            "1 paquete de adhesivos (happy face)",
+            "2 paquetes de multipeg redondos o cuadrados",
+            "2 paquete de palitos de helados",
+            "2 tacho grande de plastilina de Play Doh",
+            "1 frasco de silicón líquido de 500 ml",
+            "1 paquete de papel adhesivo formato A4",
+            "1 sacapunta doble orificio",
+            "2 borradores color blanco",
+            "10 formatos de fómix de diseños tamaño A4",
+            "20 formatos de cartulina esmaltada tamaño A4",
+            "20 formatos de cartulina iris color blanco tamaño A4",
+            "20 formatos de cartulina iris de colores tamaño A4",
+            "1 cuento tamaño A3",
+            "Una funda de legos grandes",
+            "1 rompecabezas de madera de 24 piezas",
+            "2 docena de globos # 9 (blanco, plateados o rojos)",
+            "1 funda de acetato",
+            "2 metro de cambrella de color celeste, negro o blanco",
+            "1 docena de chenillas",
+            "1 cinta doble faz fina",
+            "1 cinta transparente gruesa",
+            "6 pliegos de papel bond",
+            "1 funda de vasos plásticos de 8 onzas",
+            "1 cuaderno parvulario cuadros cocido",
+            "1 cuaderno parvulario de líneas cocido",
+            "MATERIALES DE ASEO Y USO DEL ESTUDIANTE",
+            "4 paquetes de pañitos húmedos",
+            "2 paquetes toallas de manos de 150 unidades 23x23 cm biodegradable",
+            "1 frasco de alcohol de 250 ml",
+            "1 muda de ropa con nombre"
+        ];
+
         // Renderiza la tabla de estudiantes
         function renderStudentsTable() {
             const tbody = document.querySelector('#studentsTable tbody');
@@ -1353,6 +1434,9 @@
                         </button>
                         <button class="btn btn-sm btn-outline-danger delete-student" data-id="${student.id}">
                             <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success materials-checklist" data-id="${student.id}">
+                            <i class="fas fa-check-square"></i> Lista de materiales
                         </button>
                     </td>
                 `;
@@ -1576,6 +1660,56 @@
                         }
                     });
                 }
+                
+                if (e.target.closest('.materials-checklist')) {
+                    const id = e.target.closest('.materials-checklist').dataset.id;
+                    showMaterialsChecklistModal(id);
+                }
+            });
+            
+            // Función para mostrar el modal de checklist de materiales
+            function showMaterialsChecklistModal(studentId) {
+                const student = db.students.find(s => s.id == studentId);
+                if (!student) return;
+                
+                document.getElementById('materialsStudentName').textContent = `${student.firstName} ${student.lastName}`;
+                
+                // Cargar checklist guardado o crear uno nuevo
+                if (!student.materialsChecklist || !Array.isArray(student.materialsChecklist) || 
+                    student.materialsChecklist.length !== MATERIALS_LIST.length) {
+                    student.materialsChecklist = Array(MATERIALS_LIST.length).fill(false);
+                }
+                
+                // Renderiza los checkboxes
+                const container = document.getElementById('materialsChecklistContainer');
+                container.innerHTML = MATERIALS_LIST.map((item, idx) => `
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="materialCheck${idx}" 
+                            ${student.materialsChecklist[idx] ? 'checked' : ''}>
+                        <label class="form-check-label" for="materialCheck${idx}">${item}</label>
+                    </div>
+                `).join('');
+                
+                // Guarda el id del estudiante en el form
+                document.getElementById('materialsChecklistForm').dataset.studentId = studentId;
+                
+                // Muestra el modal
+                new bootstrap.Modal(document.getElementById('materialsChecklistModal')).show();
+            }
+            
+            // Guardar checklist de materiales
+            document.getElementById('materialsChecklistForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const studentId = this.dataset.studentId;
+                const student = db.students.find(s => s.id == studentId);
+                if (!student) return;
+                
+                student.materialsChecklist = MATERIALS_LIST.map((_, idx) => 
+                    document.getElementById('materialCheck' + idx).checked);
+                
+                saveToStorage();
+                bootstrap.Modal.getInstance(document.getElementById('materialsChecklistModal')).hide();
+                Swal.fire('¡Guardado!', 'La lista de materiales ha sido actualizada.', 'success');
             });
             
             // Autenticación
@@ -3498,4 +3632,3 @@
             }
         });
     </script>
-
